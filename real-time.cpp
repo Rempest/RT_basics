@@ -1,42 +1,28 @@
-#include <cstdio>
-#include <rclcpp/rclcpp.hpp>
 #include "FreeRTOS.h"
 #include "task.h"
-#include <cstdio>
-
-// Простые задачи: печатают сообщение и "спят"
-static void TaskBlink(void* pvParameters) {
-    const char* name = static_cast<const char*>(pvParameters);
-    for (;;) {
-        std::printf("%s: tick\n", name);
-        vTaskDelay(pdMS_TO_TICKS(500)); // 500 ms
+#include <stdio.h>
+//first function
+void Task1 (void *ptrParametrs){
+    for(;;) {
+        printf("Task1 is running\n");
+//ticks for 1 seconds
+        vTaskDelay(pdMS_TO_TICK(1000));
     }
 }
-
-int main() {
-    // Создаём две задачи
-    xTaskCreate(
-        TaskBlink,            // функция задачи
-        "Blink1",             // имя (для отладки)
-        configMINIMAL_STACK_SIZE + 128, // стек (слегка больше минимального)
-        (void*)"TaskA",       // параметр задачи
-        tskIDLE_PRIORITY + 1, // приоритет
-        nullptr               // хэндл (не нужен)
-    );
-
-    xTaskCreate(
-        TaskBlink,
-        "Blink2",
-        configMINIMAL_STACK_SIZE + 128,
-        (void*)"TaskB",
-        tskIDLE_PRIORITY + 1,
-        nullptr
-    );
-
-    // Запуск планировщика — после этого main обычно не возвращается
+//second function
+void Task2(void *ptrParametrs2) {
+    for(true){
+        printf("Task2 is running\n");
+//ticks 0.5 seconds
+    vTaskDelay(pdMS_TO_TICK(500));
+}
+  }
+//main function
+int main (void) {
+    //creat tasks
+    xTaskCreate(Task1, "Task1", 1000, NULL, 1, NULL);
+    xTaskCreate(Task2, "Task2", 500, NULL, 1, NULL);
+    //starting the scheduler
     vTaskStartScheduler();
-
-    // Если планировщик остановился — попадём сюда (обычно ошибка)
-    for (;;) {}
-    return 0;
+    for(;;);
 }
